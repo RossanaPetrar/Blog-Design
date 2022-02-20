@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog Post</title>
+  </head>
+  <body>
+    <nav>
+      <ul class="blogMenu">
+        <li style="float: left">
+          <a
+            href="https://jeremymikkola.com/"
+            target="_blank"
+            class="blogMenu__logo"
+            >Jeremy's Blog</a
+          >
+        </li>
+        <li style="float: right">
+          <a
+            href="https://jeremymikkola.com/archive.html"
+            target="_blank"
+            class="blogMenu__links"
+            >ARCHIVE</a
+          >
+        </li>
+        <li style="float: right">
+          <a
+            href="https://jeremymikkola.com/about.html"
+            target="_blank"
+            class="blogMenu__links"
+            >ABOUT</a
+          >
+        </li>
+        <li style="float: right">
+          <a
+            href="https://jeremymikkola.com/"
+            target="_blank"
+            class="blogMenu__links"
+            >HOME</a
+          >
+        </li>
+      </ul>
+    </nav>
+    <hr />
+    <article>
+      <h1>Rules for Autocomplete</h1>
+      <p id="datePosted">
+        Posted on
+        <time>March 19, 2019</time>
+      </p>
+      <p class="bodyText">
+        Autocompleting text with known values seems like an easy problem to
+        solve, but so so so many UIs get it wrong. I see this frequently enough
+        that, rather than complain about them individually, I though I’d just
+        write down the set of rules they often break.
+      </p>
+      <p class="bodyText">
+        There may be cases where some of these rules aren’t the best thing to
+        do, but there should be a good reason for breaking one of these rules
+        (for example, some of these rules don’t apply if a field must be filled
+        with a value from a fixed set, like the list of US states). Following
+        these rules should always result in at very least a sane experience:
+      </p>
+      <ul type="disc" class="bodyList">
+        <li>
+          Exact matches always come first. If the user types in an option
+          exactly, other options must always go below the one matching what they
+          typed.
+        </li>
+        <li>
+          Besides exact matches, prefix matches come first. If I type “Fr” I
+          want “Fresno” not “San Francisco.”
+        </li>
+        <li>
+          After prefix matches, it can fall back to substring matches. Starting
+          with substring matches would almost always be the wrong thing to do
+          since users start typing words at the beginning not somewhere in the
+          middle.
+        </li>
+        <li>
+          If there are no substring matches, it can optionally fall back to
+          subsequence matching. This is only useful in some cases
+        </li>
+        <li>
+          If there are no subsequence/substring matches, it can optionally fall
+          back to approximate matches. This is rarely necessary to provide.
+        </li>
+        <li>Matches should be sorted alphabetically.</li>
+        <li>
+          When one option is the prefix of another, put the shortest one first.
+        </li>
+        <li>
+          The matching should probably be case insensitive unless there are two
+          options that differ only by case. In that case (pun intended), prefer
+          the one that more closely matches the user’s input.
+        </li>
+        <li>
+          The action to make use of the selection (e.g. to search the term) must
+          be a different key than the action to accept the first suggestion
+          unless you have to do something first to start using autocomplete
+          suggestions (e.g. hit the down arrow). The user should never have to
+          take extra steps to not use autocomplete.
+        </li>
+        <li>
+          The tab key should always accept the current autocomplete option, if
+          there is one (whether it is highlighted in a dropdown or suggested
+          inline).
+        </li>
+        <li>
+          If an autocomplete selection is highlighted, pressing enter should
+          always make use of that selection. It should never revert to a default
+          selection, even if part of the page is loading. If something is still
+          loading, it is better to ignore the enter press than to navigate to
+          the wrong destination.
+        </li>
+        <li>
+          Autocomplete should almost never activate on keypresses when the field
+          using autocomplete is not focused.
+        </li>
+        <li>The results should come in <100ms in the common case.</li>
+        <li>
+          It’s OK to pause autocompleting when the user is rapidly typing
+          additional letters, but don’t show results from the middle of that
+          burst of letters after the user has finished typing. It’s better to
+          wait longer and change the results once than to show results that
+          appear finished but aren’t. (I admit that this rule is quite
+          subjective.)
+        </li>
+        <li>
+          If an option is highlighted, never change it, even if new data is
+          loaded.
+        </li>
+      </ul>
+      <p class="bodyText">
+        There are some optional features that make sense in certain kinds of
+        autocompletion and not others. I’m sure there are more correct names for
+        these features than what I listed.
+      </p>
+      <ul type="disc" class="bodyList">
+        <li>
+          Show options I’ve used before when I focus the field but haven’t
+          entered anything yet.
+        </li>
+        <li>
+          Autocompletion to the nearest ambiguous prefix. If I type “g” and that
+          matches both “Google” and “GoodReads”, this operation would fill in
+          the two “o”s, allowing me to then type either “g” or “d” to select the
+          option I want.
+        </li>
+        <li>
+          Multipart matching. This is useful for autocompleting file paths,
+          where I might enter “e/b/a” to autocomplete “env/bin/activate”. ZSH
+          does this well.
+        </li>
+        <li>
+          Recursive matching. Since autocompletion sometimes serves dual purpose
+          as a quick way to browse options, sometimes you want to start with a
+          broad filter and then search within those results. For example, if I
+          enter “.pdf” to see all pdf files, I can then hit some key (perhaps
+          comma) to start searching within those results, even though what I am
+          now typing actually appears in the name before what I typed
+          previously.
+        </li>
+        <li>Spelling correction. This tends to be useful in search engines.</li>
+        <li>
+          Aliases. When trying to autocomplete a username, the person’s
+          first/last name could be allowed to autocomplete to their username.
+          The same goes for state abbreviations suggesting the full state.
+        </li>
+        <li>
+          Additional information in the results. If you are autocompleting
+          function names, it is nice to see a list of the arguments they take.
+        </li>
+        <li>
+          Context-aware suggestions. This is useful when autocompleting code or
+          a word (usually on a mobile phone) where the context is very
+          predictive of what the desired result is likely to be.
+        </li>
+        <li>
+          Make it possible to go back to what I’ve typed after accepting an
+          autocomplete suggestion. (The up arrow key tends to be a nice way to
+          allow this.)
+        </li>
+      </ul>
+    </article>
+
+    <style>
+      body {
+        max-width: 700px;
+        margin: 0 auto;
+      }
+
+      h3 {
+        color: #554444;
+        display: inline;
+      }
+
+      .blogMenu {
+        list-style-type: none;
+        margin: 0;
+        padding: 35px 0 4px 0;
+      }
+
+      .blogMenu__logo,
+      .blogMenu__links {
+        color: #554444;
+        text-decoration: none;
+        font-size: 18px;
+        font-weight: bold;
+        padding: 7px;
+      }
+
+      .blogMenu__logo {
+        padding: 0 0 0 0;
+      }
+
+      hr {
+        margin-top: 2em;
+        margin-bottom: 2em;
+        height: 2px;
+        border: 0;
+        background: #554444;
+      }
+
+      #datePosted {
+        font-style: italic;
+        color: #616161;
+        font-size: 17px;
+        padding: 5px 0 0 0;
+      }
+
+      .bodyText,
+      .bodyList {
+        font-size: 20.5px;
+        line-height: 1.7;
+      }
+    </style>
+  </body>
+</html>
